@@ -1,12 +1,33 @@
 // declare some global variables to html elements you need to do stuff with
 var startBtn = document.querySelector("#start-quiz-btn");
 var timerEl = document.querySelector("#timer");
+var quizBodyDiv = document.querySelector(".quiz-body");
 
-// declare global variables for the time left, question pool, the correct answers
+// declare global variable for the time left
 var timeLeft = 3;
 
-// Start screen html which includes game title, instructions, and a START BUTTON
+// store the questions and answer choices in an array of objects
+var questions = [
+    {
+question: 'the parameters of a function are enclosed within ____.',
+wrongAns: 'curly-braces { }',
+wrongAns: 'quotes " " ',
+rightAns: 'parentheses ( ) ',
+wrongAns:  "nothing"
+    },
 
+    {
+question: "Objects contain ___ and value pairs",
+wrongAns: 'property',
+wrongAns: 'index',
+rightAns: 'key',
+wrongAns:  "array"
+    }
+]
+
+
+
+// Start screen html which includes game title, instructions, and a START BUTTON
 // listen for clicks on the start button which triggers a countdown timer displayed at the top of the document
 
 startBtn.addEventListener('click', function(){
@@ -18,17 +39,28 @@ startBtn.addEventListener('click', function(){
         clearInterval(countdown)
     }
     }, 1000);
-clearContent(".quiz-body");
+// remove the quiz-body text content after clicking the start button
+clearContent(quizBodyDiv);
+nextQuestion()
 });
 
-// remove the quiz-body text content after clicking the start button, and answering each question correctly by calling a clear content function
+//  have a function that clears the current quiz content 
 function clearContent(documentElement){
- document.querySelector(documentElement).innerHTML = " "; 
+ documentElement.innerHTML = " "; 
 }
 
-// the starting screen is replaced with a question and four answer buttons that are selected from an array of objects containing the question with 1 correct and 3 incorrect answer choices.
-// create a new h1, assign its text content to the question, append it to the  
+// the first question is displayed
 
+// have a function that renders the next question
+function nextQuestion() {
+// render the question from the questions array at the index of currentQuestionIndex + 1;
+var questionHeader = document.createElement("h1");
+questionHeader.textContent = questions[0].question;
+console.log(questionHeader)
+quizBodyDiv.append(questionHeader)
+};
+
+// make a function that creates a new h1 element, and 4 buttons assign its text content to the question, append it to the body
 
 // after the button is clicked and the time begins decreasing on the page
 
