@@ -4,15 +4,22 @@ var timerEl = document.querySelector("#timer");
 
 // declare global variables for the time left, question pool, the correct answers
 
-var timeLeft = 75;
+var timeLeft = 3;
 
 // Start screen html which includes game title, instructions, and a START BUTTON
 
 // listen for clicks on the start button which triggers a countdown timer displayed at the top of the document
-
 startBtn.addEventListener('click', function(){
+    timerEl.textContent = "Time: " + timeLeft;
+    var countdown = setInterval(function(){
+    timeLeft--;
+    timerEl.textContent = "Time: " + timeLeft;
+    if (timeLeft == 0){
+        clearInterval(countdown)
+    }
+    }, 1000);
 
-}, 1000);
+});
 
 // after the button is clicked and the time begins decreasing on the page, the starting screen is replaced with a question and four answer buttons.
 
