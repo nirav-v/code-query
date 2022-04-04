@@ -1,4 +1,5 @@
 // declare some global variables to html elements you need to do stuff with
+var bodyEl = document.querySelector("body")
 var startBtn = document.querySelector("#start-quiz-btn");
 var timerEl = document.querySelector("#timer");
 var quizBodyDiv = document.querySelector(".quiz-body");
@@ -51,11 +52,11 @@ for (i = 0; i < questions[index].answers.length; i++) {
 
     answerBtn.addEventListener('click', function(){
         var element = event.target;
-        console.log('answer buttons work')
+        // console.log('answer buttons work')
         if (element.textContent.includes("parentheses")){
             
             index = index + 1;
-            console.log(questions[index])
+            // console.log(questions[index])
           // clear the current question from the body
         clearContent(quizBodyDiv);
           // pass the new index to the renderQuestion function
@@ -90,10 +91,10 @@ for (i = 0; i < questions[index].answers.length; i++) {
       // listen for clicks on answer btns, if they click the correct button, increase the index by 1
     answerBtn.addEventListener('click', function(){
         var element = event.target;
-        console.log('answer buttons work')
+        // console.log('answer buttons work')
         if (element.textContent.includes("key")){
             index = index + 1;
-            console.log(questions[index])
+            // console.log(questions[index])
             // clear current question
             clearContent(quizBodyDiv);
           // pass the new index to the renderQuestion function
@@ -168,6 +169,9 @@ function clearContent(documentElement) {
 // once the user is at the finsih screen they are given an input to type their initials
 // the users initials are set in local storage along with their socre
 
+
+
+
 function renderScore(){
   // clear page
   clearContent(quizBodyDiv);
@@ -179,16 +183,90 @@ function renderScore(){
   quizBodyDiv.append(scoreMessage)
   
   initialsInput = document.createElement("input")
-  initialsInput.setAttribute("placeholder", "enter your initials here")
+  initialsInput.setAttribute("type", "text");
+  initialsInput.setAttribute("placeholder", "Enter your initials here")
   quizBodyDiv.append(initialsInput)
+
 
   submitBtn = document.createElement("input");
   submitBtn.setAttribute("type", "submit");
   submitBtn.setAttribute("style", "color: white; background-color: purple; margin: 10x; padding: 5px")
-  quizBodyDiv.append(submitBtn);
+  quizBodyDiv.append(submitBtn); 
 
-}
+  // make an object with key being the initials and value being the score (timeLeft)
+ 
+  submitBtn.addEventListener('click', function(){
+    
+    event.preventDefault();
+    // var playerInitials = initialsInput.value;
 
-// every time a user submits their initials, a highscores page is displayed where the initials and score of previous players are retrieved from local storage and displayed on the document in descending order
+    //  if (playerInitials) {
+    //   var highScore = {
+    //   initials: playerInitials,
+    //   score: timeLeft 
+    // }
+
+    if (initialsInput.value == ""){
+      return;
+    }
+      // push object onto array and set it in local storage
+      playerStats = [];
+      playerStats.push(initialsInput.value)
+      console.log(playerStats)
+      localStorage.setItem("player", JSON.stringify(playerStats + "--" + timeLeft))
+      // clear whole page when player submits initials
+      clearContent(bodyEl);
+      clearContent(quizBodyDiv);
+      // get the highScore from local storage by JSON parsing the whole thing back into an object
+      // JSON.parse(localStorage.getItem(highScore));
+      // push the parsed object onto an array
+      
+      // (JSON.parse(localStorage.getItem(highScore)))
+      
+      
+      
+      // render the items from the array in an ordered list (descending order)
+      var scoreboardHeaderEL = document.createElement("h2").textContent = "Highscores";
+      document.body.append(scoreboardHeaderEL);
+
+      var scoreListEL = document.createElement("ol")
+      document.body.append(scoreListEL);
+      var playerScores = document.createElement("li")
+      playerScores.textContent = JSON.parse(localStorage.getItem("player"));
+      scoreListEL.append(playerScores);
+
+
+  });
+   
+};
+
+// }
+
+// // function that takes player to page with high scores
+// function viewHighScores(){
+//   clearContent(bodyEl);
+//   clearContent(quizBodyDiv);
+
+//   // get the highScore from local storage by JSON parsing the whole thing into an object
+//   var playerInfo = JSON.parse(localStorage.getItem(highScore));
+//   playerStats = [];
+//   // push the pared object onto an array
+//   playerStats.push(playerInfo)
+//   console.log(playerStats)
+//   // render the items from the array in an ordered list (descending order)
+// }
+
+// var playerInitials;
+
+// // every time a user submits their initials, a highscores page is displayed where the initials and score of previous players are retrieved from local storage and displayed on the document in descending order
+
+// function storeHighScores() {
+// // make an object with key being the initials and value being the score (timeLeft)
+// var highScores = {
+//   playerInitials: timeLeft
+// }
+
+//   localStorage.setItem("", JSON.stringify(highScores))
+// }
 
 // under the highscores page there is a go-back button which takes the player back to the start page.
