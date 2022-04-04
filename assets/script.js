@@ -5,8 +5,8 @@ var quizBodyDiv = document.querySelector(".quiz-body");
 var answerBtn = document.createElement("button");
 
 // declare global variable for the time left
-var timeLeft = 20;
-
+var timeLeft = 50;
+var score;
 // store the questions and answer choices in an array of objects
 var questions = [
   {
@@ -18,6 +18,18 @@ var questions = [
     answers: ["property", "index", "key", "array"],
   },
 ];
+
+function correctMessage(){
+
+    var correctMessage = document.createElement("p").textContent ='Correct!'
+    quizBodyDiv.append(correctMessage);
+  
+}
+
+function wrongMessage(){
+  var wrongMessage = document.createElement("p").textContent ='Wrong!'
+  quizBodyDiv.append(wrongMessage);
+}
 
 // function to render first question at index 0
 
@@ -41,15 +53,17 @@ for (i = 0; i < questions[index].answers.length; i++) {
         var element = event.target;
         console.log('answer buttons work')
         if (element.textContent.includes("parentheses")){
-            console.log('correct answer')
+            
             index = index + 1;
             console.log(questions[index])
           // clear the current question from the body
         clearContent(quizBodyDiv);
           // pass the new index to the renderQuestion function
         renderNextQuestion(index) 
+       correctMessage()
         } else {
           timeLeft = timeLeft - 10;
+          wrongMessage();
         };
     });
 
@@ -78,16 +92,24 @@ for (i = 0; i < questions[index].answers.length; i++) {
         var element = event.target;
         console.log('answer buttons work')
         if (element.textContent.includes("key")){
-            console.log('correct answer')
             index = index + 1;
             console.log(questions[index])
             // clear current question
             clearContent(quizBodyDiv);
           // pass the new index to the renderQuestion function
           //renderNextQuestion(index) 
+          correctMessage();
+          renderScore()
+
         } else {
           timeLeft = timeLeft - 10;
+          wrongMessage();
         };
+
+        if (element.textContent.includes("key") && index === questions.length - 1){
+          // call the function that renders score and intials input 
+        }
+
     });
   }
 
@@ -109,7 +131,7 @@ for (i = 0; i < questions[index].answers.length; i++) {
 
 // Start screen html which includes game title, instructions, and a START BUTTON
 // listen for clicks on the start button which triggers a countdown timer displayed at the top of the document
-
+// TIMER:
 startBtn.addEventListener("click", function () {
   timerEl.textContent = "Time: " + timeLeft;
   var countdown = setInterval(function () {
@@ -119,7 +141,9 @@ startBtn.addEventListener("click", function () {
     if (timeLeft < 0) {
       clearInterval(countdown);
       var score = timeLeft;
-      console.log(score);
+      console.log();
+      // call the render score and initial input function
+      renderScore();
     }
   }, 1000);
   // remove the quiz-body text content after clicking the start button
@@ -143,6 +167,27 @@ function clearContent(documentElement) {
 
 // once the user is at the finsih screen they are given an input to type their initials
 // the users initials are set in local storage along with their socre
+
+function renderScore(){
+  // clear page
+  clearContent(quizBodyDiv);
+  // display score on the page
+  finishMessage = document.createElement("p").textContent = "All Done\n"
+  quizBodyDiv.append(finishMessage)
+
+  scoreMessage = document.createElement("p").textContent = "Your final Score is " + timeLeft + "\n";
+  quizBodyDiv.append(scoreMessage)
+  
+  initialsInput = document.createElement("input")
+  initialsInput.setAttribute("placeholder", "enter your initials here")
+  quizBodyDiv.append(initialsInput)
+
+  submitBtn = document.createElement("input");
+  submitBtn.setAttribute("type", "submit");
+  submitBtn.setAttribute("style", "color: white; background-color: purple; margin: 10x; padding: 5px")
+  quizBodyDiv.append(submitBtn);
+
+}
 
 // every time a user submits their initials, a highscores page is displayed where the initials and score of previous players are retrieved from local storage and displayed on the document in descending order
 
