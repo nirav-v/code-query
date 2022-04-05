@@ -24,9 +24,9 @@ submitBtn.setAttribute(
 var goBackBtn = document.createElement("button");
 goBackBtn.textContent = "Go Back";
 goBackBtn.setAttribute("style", "background-color: purple; color: white");
-goBackBtn.addEventListener('click', function(){
-  window.location.href = "index.html"
-}) 
+goBackBtn.addEventListener("click", function () {
+  window.location.href = "index.html";
+});
 //-> want to make button refresh page on click, but including this method here prevents page from loading entirely
 
 // declare global variable for the time left and score
@@ -52,14 +52,7 @@ var questions = [
     question: "Objects contain ___ and value pairs",
     answers: ["property", "index", "key", "array"],
   },
-  // {
-  //   question: "Data types in JavaScript DO NOT include ___",
-  //   answers: ["arrays", "strings", "elements", "undefined"]
-  // },
-  // {
-  //   question: "To call a function when you click a button, you can use ___",
-  //   answer: ["click caller", "querySelector", "an eventListener", "attribute"]
-  // }
+ 
 ];
 
 // function to display the message "Correct!"
@@ -170,10 +163,10 @@ function renderNextQuestion(index) {
 // TIMER:
 var countdown; // made this global to stop same timer in another function
 startBtn.addEventListener("click", function () {
-  timerEl.textContent = "Time: " + timeLeft; // so initial starting time also shows 
+  timerEl.textContent = "Time: " + timeLeft; // so initial starting time also shows
   countdown = setInterval(function () {
     timeLeft--;
-    timerEl.textContent = "Time: " + timeLeft 
+    timerEl.textContent = "Time: " + timeLeft;
     // stop countdown if time left goes below 0
     if (timeLeft < 0) {
       clearInterval(countdown);
@@ -193,19 +186,17 @@ function clearContent(documentElement) {
   documentElement.innerHTML = " ";
 }
 
-
-
 function renderScore() {
   // clear page
   clearContent(quizBodyDiv);
   // stop the timer
   clearInterval(countdown);
   // display score on the page
-  finishMessage = document.createElement("p").textContent = "All Done\n";
+  finishMessage = document.createElement("p").textContent = "All Done! ";
   quizBodyDiv.append(finishMessage);
 
   scoreMessage = document.createElement("p").textContent =
-    "Your final Score is " + timeLeft + "\n";
+    "Your final Score is: " + timeLeft + "\n";
   quizBodyDiv.append(scoreMessage);
 
   quizBodyDiv.append(initialsInput);
@@ -216,11 +207,60 @@ function renderScore() {
 
   submitBtn.addEventListener("click", function (event) {
     event.preventDefault();
+
+    // // clear whole page when player submits initials
+    clearContent(bodyEl);
+    clearContent(quizBodyDiv);
+
     // button click does nothing if user does not enter anything
     if (!initialsInput.value) {
       return;
     }
-    //Attempted:
+  
+
+    // // push object onto player stats array and set it in local storage
+    // //playerStats, declared globally as an empty array, becomes an array of objects
+
+    // if there is a value in loacl storage for the last player's info
+    if (JSON.parse(localStorage.getItem("player"))) {
+      var player = JSON.parse(localStorage.getItem("player"));
+      // go through each item in the parsed array from local storage and push it onto the playerStats array.
+      for (var i = 0; i < player.length; i++) {
+        playerStats.push(player[i]);
+      }
+    }
+    // then push the current player's input onto the same array
+    playerStats.push(initialsInput.value + " - " + timeLeft); // the best I could do.
+
+    // sorting by score was tricky without going back and making each array item an object. Hopefully alphabetical order is better than nothing..
+    playerStats.sort()
+    // finally, set the updated player stats array in local stroage
+    localStorage.setItem("player", JSON.stringify(playerStats));
+
+    // Header for the highscores board
+    var scoreboardHeaderEL = (document.createElement("h2").textContent =
+      "Highscores");
+    document.body.append(scoreboardHeaderEL);
+    // ordered list to display highscores 
+    var scoreListEL = document.createElement("ol");
+    document.body.append(scoreListEL);
+
+    // for each item in the array parsed from local storage, create a list item, set its text to the item and the array, and append the li to the ordered list on the page
+    for (
+      var i = 0;
+      i < JSON.parse(localStorage.getItem("player")).length;
+      i++
+    ) {
+      var playerScoreListItems = document.createElement("li");
+      playerScoreListItems.textContent = JSON.parse(localStorage.getItem("player"))[i];
+      scoreListEL.append(playerScoreListItems);
+    }
+    // append the go back button to the page at the end 
+    document.body.append(goBackBtn);
+  });
+}
+
+  //Attempted:
     // create and object that holds player's initials and their score, then push the object to an array
     // did not work: JSON parsing this object as a string from local storage rendered [object Object] on page
     // var highScore = {
@@ -228,46 +268,12 @@ function renderScore() {
     //   score: timeLeft,
     // };
 
-    // // push object onto player stats array and set it in local storage
-    // //playerStats, declared globally as an empty array, becomes an array of objects
 
-  // get the last highScore from local storage and push it onto the array
-  if (JSON.parse(localStorage.getItem("player"))){
-    var player = JSON.parse(localStorage.getItem("player"));
-    for (var i = 0; i < player.length; i ++){
-      playerStats.push(player[i])
-    }
-  }
-
-  // playerStats.push(highScore);
-  playerStats.push(initialsInput.value + " - " + timeLeft) // the best I could do.
- 
-  localStorage.setItem("player", JSON.stringify(playerStats)); 
-
-    // // clear whole page when player submits initials
-    clearContent(bodyEl);
-    clearContent(quizBodyDiv);
-
-    // render the items from the array in an ordered list (descending order)
-    var scoreboardHeaderEL = (document.createElement("h2").textContent =
-      "Highscores");
-    document.body.append(scoreboardHeaderEL);
-
-    var scoreListEL = document.createElement("ol");
-    document.body.append(scoreListEL);
-    var playerScoreListItems = document.createElement("li");
-
-    for (var i = 0; i < (JSON.parse(localStorage.getItem("player"))).length; i++){
-      var playerScoreListItems = document.createElement("li");
-      playerScoreListItems.textContent = (JSON.parse(localStorage.getItem("player")))[i];
-      scoreListEL.append(playerScoreListItems);
-    }
-
-
-    //goBackBtn.addEventListener('click', location.reload())
-    document.body.append(goBackBtn);
-  });
-}
-
-
-
+     // {
+  //   question: "Data types in JavaScript DO NOT include ___",
+  //   answers: ["arrays", "strings", "elements", "undefined"]
+  // },
+  // {
+  //   question: "To call a function when you click a button, you can use ___",
+  //   answer: ["click caller", "querySelector", "an eventListener", "attribute"]
+  // }
