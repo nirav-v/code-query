@@ -24,7 +24,10 @@ submitBtn.setAttribute(
 var goBackBtn = document.createElement("button");
 goBackBtn.textContent = "Go Back";
 goBackBtn.setAttribute("style", "background-color: purple; color: white");
-//goBackBtn.addEventListener('click', location.reload()) -> want to make button refresh page on click, but including this method here prevents page from loading entirely
+goBackBtn.addEventListener('click', function(){
+  window.location.href = "index.html"
+}) 
+//-> want to make button refresh page on click, but including this method here prevents page from loading entirely
 
 // declare global variable for the time left and score
 var timeLeft = 50;
@@ -191,6 +194,7 @@ function clearContent(documentElement) {
 }
 
 
+
 function renderScore() {
   // clear page
   clearContent(quizBodyDiv);
@@ -212,25 +216,34 @@ function renderScore() {
 
   submitBtn.addEventListener("click", function (event) {
     event.preventDefault();
-
     // button click does nothing if user does not enter anything
     if (!initialsInput.value) {
       return;
     }
+    //Attempted:
+    // create and object that holds player's initials and their score, then push the object to an array
+    // did not work: JSON parsing this object as a string from local storage rendered [object Object] on page
 
-    // create and object that holds player's initials and their score
-    // note: JSON parsing this object as a string from local storage rendered [object Object] on page
     // var highScore = {
     //   initials: initialsInput.value,
     //   score: timeLeft,
     // };
-    // // push object onto array and set it in local storage
-    // playerStats becomes an array of objects
-    // playerStats.push(highScore);
-    
-    playerStats.push(initialsInput.value + " - " + timeLeft) // the best I could do..
+
+    // // push object onto player stats array and set it in local storage
+    // //playerStats, declared globally as an empty array, becomes an array of objects
+
+  // get the last highScore from local storage and push it onto the array
+  if (JSON.parse(localStorage.getItem("player"))){
+    var player = JSON.parse(localStorage.getItem("player"));
+    for (var i = 0; i < player.length; i ++){
+      playerStats.push(player[i])
+    }
+  }
+
+  // playerStats.push(highScore);
+  playerStats.push(initialsInput.value + " - " + timeLeft) // the best I could do.
  
-    localStorage.setItem("player", JSON.stringify(playerStats)); // issue: local storage keeps overwriting the last player entry
+  localStorage.setItem("player", JSON.stringify(playerStats)); // issue: local storage keeps overwriting the last player entry
 
     // // clear whole page when player submits initials
     clearContent(bodyEl);
@@ -244,12 +257,13 @@ function renderScore() {
     var scoreListEL = document.createElement("ol");
     document.body.append(scoreListEL);
     var playerScores = document.createElement("li");
-    // get the highScore from local storage and display it on the list
-    playerScores.textContent = JSON.parse(localStorage.getItem("player"));
-    scoreListEL.append(playerScores);
+    playerScores.textContent = player;
+    scoreListEL.append(playerScores)
 
-    // goBackBtn.addEventListener('click', location.reload())
+    //goBackBtn.addEventListener('click', location.reload())
     document.body.append(goBackBtn);
   });
 }
+
+
 
