@@ -223,7 +223,6 @@ function renderScore() {
     //Attempted:
     // create and object that holds player's initials and their score, then push the object to an array
     // did not work: JSON parsing this object as a string from local storage rendered [object Object] on page
-
     // var highScore = {
     //   initials: initialsInput.value,
     //   score: timeLeft,
@@ -243,7 +242,7 @@ function renderScore() {
   // playerStats.push(highScore);
   playerStats.push(initialsInput.value + " - " + timeLeft) // the best I could do.
  
-  localStorage.setItem("player", JSON.stringify(playerStats)); // issue: local storage keeps overwriting the last player entry
+  localStorage.setItem("player", JSON.stringify(playerStats)); 
 
     // // clear whole page when player submits initials
     clearContent(bodyEl);
@@ -256,9 +255,14 @@ function renderScore() {
 
     var scoreListEL = document.createElement("ol");
     document.body.append(scoreListEL);
-    var playerScores = document.createElement("li");
-    playerScores.textContent = player;
-    scoreListEL.append(playerScores)
+    var playerScoreListItems = document.createElement("li");
+
+    for (var i = 0; i < (JSON.parse(localStorage.getItem("player"))).length; i++){
+      var playerScoreListItems = document.createElement("li");
+      playerScoreListItems.textContent = (JSON.parse(localStorage.getItem("player")))[i];
+      scoreListEL.append(playerScoreListItems);
+    }
+
 
     //goBackBtn.addEventListener('click', location.reload())
     document.body.append(goBackBtn);
