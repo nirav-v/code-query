@@ -1,34 +1,73 @@
-// declare some global variables to html elements you need to do stuff with
-var bodyEl = document.querySelector("body")
+// declare some global variables for the start page html elements you need to do stuff with
+var bodyEl = document.querySelector("body");
+var mainEl = document.querySelector(".content");
 var startBtn = document.querySelector("#start-quiz-btn");
 var timerEl = document.querySelector("#timer");
 var quizBodyDiv = document.querySelector(".quiz-body");
 var answerBtn = document.createElement("button");
 
-// declare global variable for the time left
+// creating the and styling the initials input form
+initialsInput = document.createElement("input");
+initialsInput.setAttribute("id", "initials");
+initialsInput.setAttribute("type", "text");
+initialsInput.setAttribute("placeholder", "Enter your initials here");
+
+// creating and styling the submit button
+submitBtn = document.createElement("input");
+submitBtn.setAttribute("type", "submit");
+submitBtn.setAttribute(
+  "style",
+  "color: white; background-color: purple; margin: 10x; padding: 5px"
+);
+
+// creating and styling the go back button
+var goBackBtn = document.createElement("button");
+goBackBtn.textContent = "Go Back";
+goBackBtn.setAttribute("style", "background-color: purple; color: white");
+//goBackBtn.addEventListener('click', location.reload()) -> want to make button refresh page on click, but including this method here prevents page from loading entirely
+
+// declare global variable for the time left and score
 var timeLeft = 50;
 var score;
+var score = timeLeft;
+
+// globally create empty array to hold new player scores
+var playerStats = [];
+
 // store the questions and answer choices in an array of objects
 var questions = [
   {
     question: "the parameters of a function are enclosed within ____.",
-    answers: ["curly-braces { }", 'quotes " " ', "parentheses ( ) ", " commas , "],
+    answers: [
+      "curly-braces { }",
+      'quotes " " ',
+      "parentheses ( ) ",
+      " commas , ",
+    ],
   },
   {
     question: "Objects contain ___ and value pairs",
     answers: ["property", "index", "key", "array"],
   },
+  // {
+  //   question: "Data types in JavaScript DO NOT include ___",
+  //   answers: ["arrays", "strings", "elements", "undefined"]
+  // },
+  // {
+  //   question: "To call a function when you click a button, you can use ___",
+  //   answer: ["click caller", "querySelector", "an eventListener", "attribute"]
+  // }
 ];
 
-function correctMessage(){
-
-    var correctMessage = document.createElement("p").textContent ='Correct!'
-    quizBodyDiv.append(correctMessage);
-  
+// function to display the message "Correct!"
+function correctMessage() {
+  var correctMessage = (document.createElement("p").textContent = "Correct!");
+  quizBodyDiv.append(correctMessage);
 }
 
-function wrongMessage(){
-  var wrongMessage = document.createElement("p").textContent ='Wrong!'
+// function that displays the message "Wrong"
+function wrongMessage() {
+  var wrongMessage = (document.createElement("p").textContent = "Wrong!");
   quizBodyDiv.append(wrongMessage);
 }
 
@@ -38,47 +77,47 @@ function wrongMessage(){
 function renderFirstQuestion(index) {
   // make an h2 element and render the question from the questions array at the correct index;
   var questionHeader = document.createElement("h2");
-  index = 0
+  index = 0;
   questionHeader.textContent = questions[index].question;
   quizBodyDiv.append(questionHeader);
-  // rendering the buttons
-for (i = 0; i < questions[index].answers.length; i++) {
+  // creating a button for each answer choice
+  for (i = 0; i < questions[index].answers.length; i++) {
     var answerBtn = document.createElement("button");
     answerBtn.textContent = questions[index].answers[i];
-    // display the button
+    // display the button on the page
     quizBodyDiv.append(answerBtn);
-    // style button
-    answerBtn.setAttribute("style", "color: white; background-color: purple; font-size: 20px; padding: 5px; margin: 5px; border-radius: 10px; display: block;" )
+    // styling button
+    answerBtn.setAttribute(
+      "style",
+      "color: white; background-color: purple; font-size: 20px; padding: 5px; margin: 5px; border-radius: 10px; display: block;"
+    );
 
-    answerBtn.addEventListener('click', function(){
-        var element = event.target;
-        // console.log('answer buttons work')
-        if (element.textContent.includes("parentheses")){
-            
-            index = index + 1;
-            // console.log(questions[index])
-          // clear the current question from the body
+    answerBtn.addEventListener("click", function (event) {
+      var element = event.target;
+      // console.log('answer buttons work')
+      if (element.textContent.includes("parentheses")) {
+        index = index + 1;
+        // console.log(questions[index])
+        // clear the current question from the body
         clearContent(quizBodyDiv);
-          // pass the new index to the renderQuestion function
-        renderNextQuestion(index) 
-       correctMessage()
-        } else {
-          timeLeft = timeLeft - 10;
-          wrongMessage();
-        };
+        // pass the new index to the renderQuestion function
+        renderNextQuestion(index);
+        correctMessage();
+      } else {
+        timeLeft = timeLeft - 10;
+        wrongMessage();
+      }
     });
+  }
+}
 
-  } 
-  
- } 
-
-  function renderNextQuestion(index){
-    for (i = 0; i < questions.length; i ++){
-      var questionHeader = document.createElement("h2");
-      index = i;
-    }
-    questionHeader.textContent = questions[index].question;
-    quizBodyDiv.append(questionHeader);
+function renderNextQuestion(index) {
+  for (i = 0; i < questions.length; i++) {
+    var questionHeader = document.createElement("h2");
+    index = i;
+  }
+  questionHeader.textContent = questions[index].question;
+  quizBodyDiv.append(questionHeader);
   // for each item in the answers array property within the questions object, create a button and make its text content equal the string at the same index
   for (i = 0; i < questions[index].answers.length; i++) {
     var answerBtn = document.createElement("button");
@@ -86,58 +125,52 @@ for (i = 0; i < questions[index].answers.length; i++) {
     // display the button
     quizBodyDiv.append(answerBtn);
     // style button
-    answerBtn.setAttribute("style", "color: white; background-color: purple; font-size: 20px; padding: 5px; margin: 5px; border-radius: 10px; display: block;" )
+    answerBtn.setAttribute(
+      "style",
+      "color: white; background-color: purple; font-size: 20px; padding: 5px; margin: 5px; border-radius: 10px; display: block;"
+    );
 
-      // listen for clicks on answer btns, if they click the correct button, increase the index by 1
-    answerBtn.addEventListener('click', function(){
-        var element = event.target;
-        // console.log('answer buttons work')
-        if (element.textContent.includes("key")){
-            index = index + 1;
-            // console.log(questions[index])
-            // clear current question
-            clearContent(quizBodyDiv);
-          // pass the new index to the renderQuestion function
-          //renderNextQuestion(index) 
-          correctMessage();
-          renderScore()
+    // listen for clicks on answer btns, if they click the correct button, increase the index by 1
+    answerBtn.addEventListener("click", function (event) {
+      var element = event.target;
+      // console.log('answer buttons work')
+      if (
+        element.textContent.includes("key") ||
+        element.textContent.includes("element") ||
+        element.textContent.includes("eventListener")
+      ) {
+        index = index + 1;
+        // console.log(questions[index])
+        // clear current question
+        clearContent(quizBodyDiv);
+        // pass the new index to the renderQuestion function
+        //renderNextQuestion(index)
+        correctMessage();
+        renderScore();
+      } else {
+        timeLeft = timeLeft - 10;
+        wrongMessage();
+      }
 
-        } else {
-          timeLeft = timeLeft - 10;
-          wrongMessage();
-        };
-
-        if (element.textContent.includes("key") && index === questions.length - 1){
-          // call the function that renders score and intials input 
-        }
-
+      if (
+        element.textContent.includes("key") &&
+        index === questions.length - 1
+      ) {
+        // call the function that renders score and intials input
+      }
     });
   }
-
-};
-
-  // loop through each property in answerChoice array's objects
-  //for (i = 0; i < answerChoices[index].length; i++)
-  //   for each property create a button element and set its text content to the value of that choice
-
-  // answerBtn.textContent = answerChoices[index].rightAns
-  // quizBodyDiv.append(answerBtn);
-
-// when the index is > questions.length - 1, at the last question
-// if they choose the correct answer on the last question, call a function that exits out of the page and displays the score and input for player initials
-
-// make a function that creates a new h1 element, and 4 buttons assign its text content to the question, append it to the body
-
-// after the button is clicked and the time begins decreasing on the page
+}
 
 // Start screen html which includes game title, instructions, and a START BUTTON
 // listen for clicks on the start button which triggers a countdown timer displayed at the top of the document
 // TIMER:
+var countdown; // made this global to stop same timer in another function
 startBtn.addEventListener("click", function () {
-  timerEl.textContent = "Time: " + timeLeft;
-  var countdown = setInterval(function () {
+  timerEl.textContent = "Time: " + timeLeft; // so initial starting time also shows 
+  countdown = setInterval(function () {
     timeLeft--;
-    timerEl.textContent = "Time: " + timeLeft;
+    timerEl.textContent = "Time: " + timeLeft 
     // stop countdown if time left goes below 0
     if (timeLeft < 0) {
       clearInterval(countdown);
@@ -157,116 +190,66 @@ function clearContent(documentElement) {
   documentElement.innerHTML = " ";
 }
 
-// listen for clicks on each of the answer choice buttons, check if the button choice matches the answer for that question
 
-// IF the button clicked matches the correct answer for that question,
-// then the current question is replaced with the next question and  "correct!" is displayed below the answer choice buttons.
-// Else when the user clicks the wrong answer choice button, the remaining time decreases by 10 sec.
-
-// IF the user gets through all the questions and the time left is > 1, that time is equal to their score
-// Else  when the time left reaches 0 or less (from wrong guesses) the game automatically ends and goes to the finishing screen displaying the score.
-
-// once the user is at the finsih screen they are given an input to type their initials
-// the users initials are set in local storage along with their socre
-
-
-
-
-function renderScore(){
+function renderScore() {
   // clear page
   clearContent(quizBodyDiv);
+  // stop the timer
+  clearInterval(countdown);
   // display score on the page
-  finishMessage = document.createElement("p").textContent = "All Done\n"
-  quizBodyDiv.append(finishMessage)
+  finishMessage = document.createElement("p").textContent = "All Done\n";
+  quizBodyDiv.append(finishMessage);
 
-  scoreMessage = document.createElement("p").textContent = "Your final Score is " + timeLeft + "\n";
-  quizBodyDiv.append(scoreMessage)
-  
-  initialsInput = document.createElement("input")
-  initialsInput.setAttribute("type", "text");
-  initialsInput.setAttribute("placeholder", "Enter your initials here")
-  quizBodyDiv.append(initialsInput)
+  scoreMessage = document.createElement("p").textContent =
+    "Your final Score is " + timeLeft + "\n";
+  quizBodyDiv.append(scoreMessage);
 
+  quizBodyDiv.append(initialsInput);
 
-  submitBtn = document.createElement("input");
-  submitBtn.setAttribute("type", "submit");
-  submitBtn.setAttribute("style", "color: white; background-color: purple; margin: 10x; padding: 5px")
-  quizBodyDiv.append(submitBtn); 
+  quizBodyDiv.append(submitBtn);
 
   // make an object with key being the initials and value being the score (timeLeft)
- 
-  submitBtn.addEventListener('click', function(){
-    
+
+  submitBtn.addEventListener("click", function (event) {
     event.preventDefault();
-    // var playerInitials = initialsInput.value;
 
-    //  if (playerInitials) {
-    //   var highScore = {
-    //   initials: playerInitials,
-    //   score: timeLeft 
-    // }
-
-    if (initialsInput.value == ""){
+    // button click does nothing if user does not enter anything
+    if (!initialsInput.value) {
       return;
     }
-      // push object onto array and set it in local storage
-      playerStats = [];
-      playerStats.push(initialsInput.value)
-      console.log(playerStats)
-      localStorage.setItem("player", JSON.stringify(playerStats + "--" + timeLeft))
-      // clear whole page when player submits initials
-      clearContent(bodyEl);
-      clearContent(quizBodyDiv);
-      // get the highScore from local storage by JSON parsing the whole thing back into an object
-      // JSON.parse(localStorage.getItem(highScore));
-      // push the parsed object onto an array
-      
-      // (JSON.parse(localStorage.getItem(highScore)))
-      
-      
-      
-      // render the items from the array in an ordered list (descending order)
-      var scoreboardHeaderEL = document.createElement("h2").textContent = "Highscores";
-      document.body.append(scoreboardHeaderEL);
 
-      var scoreListEL = document.createElement("ol")
-      document.body.append(scoreListEL);
-      var playerScores = document.createElement("li")
-      playerScores.textContent = JSON.parse(localStorage.getItem("player"));
-      scoreListEL.append(playerScores);
+    // create and object that holds player's initials and their score
+    // note: JSON parsing this object as a string from local storage rendered [object Object] on page
+    // var highScore = {
+    //   initials: initialsInput.value,
+    //   score: timeLeft,
+    // };
+    // // push object onto array and set it in local storage
+    // playerStats becomes an array of objects
+    // playerStats.push(highScore);
+    
+    playerStats.push(initialsInput.value + " - " + timeLeft) // the best I could do..
+ 
+    localStorage.setItem("player", JSON.stringify(playerStats)); // issue: local storage keeps overwriting the last player entry
 
+    // // clear whole page when player submits initials
+    clearContent(bodyEl);
+    clearContent(quizBodyDiv);
 
+    // render the items from the array in an ordered list (descending order)
+    var scoreboardHeaderEL = (document.createElement("h2").textContent =
+      "Highscores");
+    document.body.append(scoreboardHeaderEL);
+
+    var scoreListEL = document.createElement("ol");
+    document.body.append(scoreListEL);
+    var playerScores = document.createElement("li");
+    // get the highScore from local storage and display it on the list
+    playerScores.textContent = JSON.parse(localStorage.getItem("player"));
+    scoreListEL.append(playerScores);
+
+    // goBackBtn.addEventListener('click', location.reload())
+    document.body.append(goBackBtn);
   });
-   
-};
+}
 
-// }
-
-// // function that takes player to page with high scores
-// function viewHighScores(){
-//   clearContent(bodyEl);
-//   clearContent(quizBodyDiv);
-
-//   // get the highScore from local storage by JSON parsing the whole thing into an object
-//   var playerInfo = JSON.parse(localStorage.getItem(highScore));
-//   playerStats = [];
-//   // push the pared object onto an array
-//   playerStats.push(playerInfo)
-//   console.log(playerStats)
-//   // render the items from the array in an ordered list (descending order)
-// }
-
-// var playerInitials;
-
-// // every time a user submits their initials, a highscores page is displayed where the initials and score of previous players are retrieved from local storage and displayed on the document in descending order
-
-// function storeHighScores() {
-// // make an object with key being the initials and value being the score (timeLeft)
-// var highScores = {
-//   playerInitials: timeLeft
-// }
-
-//   localStorage.setItem("", JSON.stringify(highScores))
-// }
-
-// under the highscores page there is a go-back button which takes the player back to the start page.
